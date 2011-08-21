@@ -1,0 +1,14 @@
+Thumbs.db
+*.obj
+*.exe
+*.pdb
+obj/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+_ReSharper.*/
+*.ReSharper.user
+Backup/
+_UpgradeReport_Files/
+UpgradeLog.XML
+*.cacchefile
