@@ -46,6 +46,9 @@
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.UndoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RedoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.addBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addSphereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addCapsuleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -110,6 +113,7 @@
             this.rotateButton = new System.Windows.Forms.ToolStripButton();
             this.scaleButton = new System.Windows.Forms.ToolStripButton();
             this.scaleAllButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.renderToolsSplit.Panel1.SuspendLayout();
@@ -257,6 +261,9 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.UndoToolStripMenuItem,
+            this.RedoToolStripMenuItem,
+            this.toolStripSeparator3,
             this.addBoxToolStripMenuItem,
             this.addSphereToolStripMenuItem,
             this.addCapsuleToolStripMenuItem,
@@ -269,6 +276,28 @@
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // UndoToolStripMenuItem
+            // 
+            this.UndoToolStripMenuItem.Name = "UndoToolStripMenuItem";
+            this.UndoToolStripMenuItem.ShortcutKeyDisplayString = "";
+            this.UndoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.UndoToolStripMenuItem.Text = "&Undo";
+            this.UndoToolStripMenuItem.Click += new System.EventHandler(this.UndoToolStripMenuItem_Click);
+            // 
+            // RedoToolStripMenuItem
+            // 
+            this.RedoToolStripMenuItem.Name = "RedoToolStripMenuItem";
+            this.RedoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.RedoToolStripMenuItem.Text = "&Redo";
+            this.RedoToolStripMenuItem.Click += new System.EventHandler(this.RedoToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(186, 6);
             // 
             // addBoxToolStripMenuItem
             // 
@@ -304,13 +333,11 @@
             // 
             // dupplicateToolStripMenuItem
             // 
-            this.dupplicateToolStripMenuItem.Enabled = false;
             this.dupplicateToolStripMenuItem.Name = "dupplicateToolStripMenuItem";
             this.dupplicateToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.dupplicateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.dupplicateToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.dupplicateToolStripMenuItem.Text = "Dupplicate";
-            this.dupplicateToolStripMenuItem.Visible = false;
+            this.dupplicateToolStripMenuItem.Text = "Duplicate";
             this.dupplicateToolStripMenuItem.Click += new System.EventHandler(this.dupplicateToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
@@ -741,7 +768,8 @@
             this.moveButton,
             this.rotateButton,
             this.scaleButton,
-            this.scaleAllButton});
+            this.scaleAllButton,
+            this.toolStripButton1});
             this.toolbar.Location = new System.Drawing.Point(0, 24);
             this.toolbar.Name = "toolbar";
             this.toolbar.Size = new System.Drawing.Size(944, 25);
@@ -856,6 +884,16 @@
             this.scaleAllButton.Name = "scaleAllButton";
             this.scaleAllButton.Size = new System.Drawing.Size(23, 22);
             this.scaleAllButton.Text = "Scale All";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "duplicateButton";
+            this.toolStripButton1.Click += new System.EventHandler(this.duplicateButton_Click);
             // 
             // Main
             // 
@@ -980,6 +1018,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem55;
         private System.Windows.Forms.ToolStripMenuItem primitivePropertiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem physicsObjectFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem UndoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RedoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }
 

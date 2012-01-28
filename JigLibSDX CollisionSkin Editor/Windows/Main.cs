@@ -9,7 +9,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using JigLibSDX.Collision;
+using MonitoredUndo;
 using SlimDX;
 using SlimDX.Direct3D9;
 using DI = SlimDX.DirectInput;
@@ -55,6 +56,35 @@ namespace JigLibSDX_CSE
         #endregion
 
         private Project _project;
+
+        #region My Changes / Additions
+
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = _project.CollisionPrimitiveInfos[_project.SelectedCollisionPrimitiveInfo];
+            if(item != null)
+            {
+                UndoService.Current[item].Undo();
+            }
+
+            UpdateUndoRedoMenuLabels(item);
+        }
+
+        private void UpdateUndoRedoMenuLabels(CollisionPrimitiveInfo item)
+        {
+            UndoToolStripMenuItem.Enabled = UndoService.Current[item].CanUndo;
+            RedoToolStripMenuItem.Enabled = UndoService.Current[item].CanRedo;
+        }
+
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = _project.CollisionPrimitiveInfos[_project.SelectedCollisionPrimitiveInfo];
+            if (item != null)
+            {
+                UndoService.Current[item].Redo();
+            }
+        }
+        #endregion
 
         #region Input
         private BasicInput _input;
@@ -378,86 +408,6 @@ namespace JigLibSDX_CSE
             }
         }
         #endregion
-
-        //// Experimental. Sometimes the selection just isn't right -.- ... 
-        //private void TrySelectPrimitive(ref Project project, float x, float y)
-        //{
-        //    Viewport viewport = new Viewport(0, 0, _camera.Width, _camera.Height, _camera.Znear, _camera.Zfar);
-
-        //    Vector3 nearClick = new Vector3(x, y, _camera.Znear);
-        //    Vector3 farClick = new Vector3(x, y, _camera.Zfar);
-
-        //    Vector3 near = Vector3.Zero;
-        //    Vector3 far = Vector3.Zero;
-        //    Vector3 direction = Vector3.Zero;
-
-        //    bool intersects = false;
-
-        //    float lastDistance = float.MaxValue;
-        //    float distance = 0f;
-
-        //    int selectedPrimitive = -1;
-
-        //    for (int i = 0; i < project.CollisionPrimitiveInfos.Count; i++)
-        //    {
-        //        if (!project.CollisionPrimitiveInfos[i].Hidden)
-        //        {
-        //            Console.WriteLine("Primitive {0}: {1}", i, project.CollisionPrimitiveInfos[i].Position);
-
-        //            switch (project.CollisionPrimitiveInfos[i].Primitive.Type)
-        //            {
-        //                case (int)JLG.PrimitiveType.Box:
-        //                    JLG.Box box = (JLG.Box)project.CollisionPrimitiveInfos[i].Primitive;
-
-        //                    near = Vector3.Unproject(nearClick, viewport, _camera.Projection, _camera.View, box.TransformMatrix * Matrix.Scaling(box.SideLengths));
-        //                    far = Vector3.Unproject(farClick, viewport, _camera.Projection, _camera.View, box.TransformMatrix * Matrix.Scaling(box.SideLengths));
-
-        //                    direction = far - near;
-        //                    direction.Normalize();
-
-        //                    intersects = _box.Intersects(new Ray(near, direction), out distance);
-        //                    break;
-
-        //                case (int)JLG.PrimitiveType.Sphere:
-        //                    JLG.Sphere sphere = (JLG.Sphere)project.CollisionPrimitiveInfos[i].Primitive;
-
-        //                    near = Vector3.Unproject(nearClick, viewport, _camera.Projection, _camera.View, Matrix.Scaling(sphere.Radius, sphere.Radius, sphere.Radius) * sphere.TransformMatrix);
-        //                    far = Vector3.Unproject(farClick, viewport, _camera.Projection, _camera.View, Matrix.Scaling(sphere.Radius, sphere.Radius, sphere.Radius) * sphere.TransformMatrix);
-
-        //                    direction = far - near;
-        //                    direction.Normalize();
-
-        //                    intersects = _sphere.Intersects(new Ray(near, direction), out distance);
-        //                    break;
-        //            }
-
-        //            Console.WriteLine("Near {0}", near);
-        //            Console.WriteLine("Far {0}", far);
-        //            Console.WriteLine("Direction {0}", direction);
-
-        //            if (intersects)
-        //            {
-        //                Console.WriteLine("Intersects at distance {0} (last: {1}).", distance, lastDistance);
-
-        //                if (distance < lastDistance)
-        //                {
-        //                    lastDistance = distance;
-        //                    selectedPrimitive = i;
-
-        //                    Console.WriteLine("Selected primitive {0}.", i);
-        //                }
-        //            }
-
-        //            Console.WriteLine("");
-        //        }
-        //    }
-
-        //    if (selectedPrimitive != -1f && project.SelectedCollisionPrimitiveInfo != selectedPrimitive)
-        //    {
-        //        project.SelectedCollisionPrimitiveInfo = selectedPrimitive;
-        //        UpdateProjectTree(ref project);
-        //    }
-        //}
 
         #region Update Timer
         private void updateTimer_Tick(object sender, EventArgs e)
@@ -1081,7 +1031,7 @@ namespace JigLibSDX_CSE
         }
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
+        {            
             Draw();
         }
 
@@ -1699,32 +1649,42 @@ namespace JigLibSDX_CSE
         #region CollisionSkin Operations
         private void AddBox(ref Project project)
         {
-            CollisionPrimitiveInfo info = new CollisionPrimitiveInfo(JLG.PrimitiveType.Box, new JLC.MaterialProperties(0.25f, 0.5f, 0.35f));
+            var info = new CollisionPrimitiveInfo(JLG.PrimitiveType.Box, new JLC.MaterialProperties(0.25f, 0.5f, 0.35f));
             project.CollisionPrimitiveInfos.Add(info);
+            project.SelectedCollisionPrimitiveInfo = project.CollisionPrimitiveInfos.Count - 1;
         }
 
         private void AddSphere(ref Project project)
         {
-            CollisionPrimitiveInfo info = new CollisionPrimitiveInfo(JLG.PrimitiveType.Sphere, new JLC.MaterialProperties(0.25f, 0.5f, 0.35f));
+            var info = new CollisionPrimitiveInfo(JLG.PrimitiveType.Sphere, new JLC.MaterialProperties(0.25f, 0.5f, 0.35f));
             project.CollisionPrimitiveInfos.Add(info);
+            project.SelectedCollisionPrimitiveInfo = project.CollisionPrimitiveInfos.Count - 1;        
         }
 
         private void AddCapsule(ref Project project)
         {
-            CollisionPrimitiveInfo info = new CollisionPrimitiveInfo(JLG.PrimitiveType.Capsule, new JLC.MaterialProperties(0.25f, 0.5f, 0.35f));
+            var info = new CollisionPrimitiveInfo(JLG.PrimitiveType.Capsule, new JLC.MaterialProperties(0.25f, 0.5f, 0.35f));
             project.CollisionPrimitiveInfos.Add(info);
+            project.SelectedCollisionPrimitiveInfo = project.CollisionPrimitiveInfos.Count - 1;
         }
 
         private void Duplicate(ref Project project)
         {
-            CollisionPrimitiveInfo info;
-
+            var currentPrimitive = project.CollisionPrimitiveInfos[project.SelectedCollisionPrimitiveInfo];
             if (project.SelectedCollisionPrimitiveInfo != -1)
             {
-                info = project.CollisionPrimitiveInfos[project.SelectedCollisionPrimitiveInfo];
+                var info = new CollisionPrimitiveInfo(currentPrimitive.PrimitiveType, currentPrimitive.MaterialProperties)
+                               {
+                                   MaterialProperties = currentPrimitive.MaterialProperties,
+                                   Orientation = currentPrimitive.Orientation,
+                                   Position = currentPrimitive.Position,
+                                   Rotations = currentPrimitive.Rotations,
+                                   Scale = currentPrimitive.Scale,
+                               }; 
 
                 //TODO: Change the position of the primitive oO? ... mhhh.
                 project.CollisionPrimitiveInfos.Add(info);
+                project.SelectedCollisionPrimitiveInfo = project.CollisionPrimitiveInfos.Count - 1;              
             }
             else
             {
@@ -1922,6 +1882,11 @@ namespace JigLibSDX_CSE
             {
                 MessageBox.Show(this, "Create a new project first.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void duplicateButton_Click(object sender, EventArgs e)
+        {
+            Duplicate(ref _project);
         }
     }
 }
